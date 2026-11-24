@@ -4,15 +4,27 @@ Sleep-screen wallpapers for [CrossPoint Reader](https://github.com/crosspoint-re
 
 ![Preview](anteprima.png)
 
-## Usage
+## Installing on CrossPoint
 
-Copy the BMP files from `sleep/` to `/.sleep/` on the microSD card, then set **Sleep Screen** to **Custom**. CrossPoint picks a random file at each sleep.
+The files in `sleep/` are 480x800, 2-bit grayscale BMPs. That is the native screen size, so CrossPoint draws them directly, without converting or caching them.
 
-On macOS, Finder and `cp` create `._*` files on the card, and CrossPoint shows them as invalid BMPs. Remove them after copying:
+1. Turn off the device and put its microSD card in your computer.
+2. In the root of the card, create a folder named `.sleep`. Finder refuses names that start with a dot, so either create it from a terminal (`mkdir /Volumes/<card>/.sleep`) or name the folder `sleep`, which CrossPoint also accepts.
+3. Copy the `patent_*.bmp` files from `sleep/` into that folder. You do not need `credits.csv` on the card.
+4. On macOS, remove the `._*` files that Finder and `cp` create next to each copy. CrossPoint lists them as invalid BMPs:
 
-```sh
-dot_clean -m /Volumes/<card>/.sleep
-```
+   ```sh
+   dot_clean -m /Volumes/<card>/.sleep
+   ```
+
+5. Eject the card, put it back in the device and turn it on.
+6. Open **Settings → Display** and set:
+   - **Sleep Screen** to **Custom**, or to **Cover + Custom** to show the book cover while you are reading.
+   - **Sleep Screen Cover Filter** to **None**. **Contrast** and **Inverted** draw the images in black and white only.
+
+CrossPoint picks a random wallpaper each time the device sleeps. A file named `sleep.bmp` in the root of the card takes priority over the folder, so remove it if you have one.
+
+To see `.sleep` in the CrossPoint file browser, enable hidden files under **Settings → System**.
 
 ## Regenerating
 
@@ -31,9 +43,12 @@ Main options:
 - `--zoom`, `--margin`, `--trim`: how much of the screen the drawing fills.
 - `--thicken`: line thickening before the downscale, so thin lines stay black.
 - `--bits`: 2 for 4 gray levels, 1 for black and white.
+- `--contact`: your email or URL, added to the User-Agent. The [Wikimedia User-Agent policy](https://foundation.wikimedia.org/wiki/Policy:Wikimedia_Foundation_User-Agent_Policy) asks automated clients to include contact information.
 
 Commons page IDs listed in `esclusi.txt`, next to the `--out` folder, are skipped.
 
 ## Credits
 
-`sleep/credits.csv` lists the Commons title, year, license and source URL of each drawing.
+The drawings come from [Wikimedia Commons](https://commons.wikimedia.org/). Most are scans published by the U.S. National Archives (NARA) and the Digital Public Library of America (DPLA). Every source file is marked as public domain on Commons, so no attribution is legally required.
+
+`sleep/credits.csv` lists, for each wallpaper, the Commons title, year, license and source page. The processed images only change contrast, size and line weight.
