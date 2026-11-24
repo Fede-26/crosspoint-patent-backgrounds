@@ -52,3 +52,9 @@ Commons page IDs listed in `esclusi.txt`, next to the `--out` folder, are skippe
 The drawings come from [Wikimedia Commons](https://commons.wikimedia.org/). Most are scans published by the U.S. National Archives (NARA) and the Digital Public Library of America (DPLA). Every source file is marked as public domain on Commons, so no attribution is legally required.
 
 `sleep/credits.csv` lists, for each wallpaper, the Commons title, year, license and source page. The processed images only change contrast, size and line weight.
+
+## License
+
+The script `genera_sfondi.py` is released under the [MIT License](LICENSE).
+
+The images (`sleep/*.bmp` and `anteprima.png`) keep the status of their sources, which are in the public domain. To the extent that the processing adds any copyright of its own, the author waives it under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/).
