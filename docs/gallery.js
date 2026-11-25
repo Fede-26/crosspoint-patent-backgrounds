@@ -2,23 +2,14 @@
 const REPO = "Fede-26/ereader-patent-wallpapers";
 const PAGE = 48; // cards added per click on "Show more"
 
-// key: the folder under files/.
-const DEVICES = [
-  { key: "crosspoint", name: "CrossPoint", size: "480×800", ext: "bmp",
-    note: "reTerminal Sticky and other CrossPoint devices. Copy the BMPs into a folder named .sleep on the microSD card, then set Sleep Screen to Custom." },
-  { key: "png-480x800", name: "KOReader", size: "480×800", ext: "png",
-    note: "PNG for KOReader (it does not list BMP files) or any e-reader with a 480×800 screen." },
-  { key: "kindle-pw11", name: "Kindle Paperwhite 11th gen", size: "1236×1648", ext: "png",
-    note: "PNG for KOReader on this Kindle. Use Sleep screen → Wallpaper → Custom images → Choose random image folder." },
-  { key: "kindle-pw12", name: "Kindle Paperwhite 12th gen", size: "1264×1680", ext: "png",
-    note: "PNG for KOReader on this Kindle. Use Sleep screen → Wallpaper → Custom images → Choose random image folder." },
-];
+// Loaded from devices.json, which genera_sfondi.py writes from its TARGETS list.
+let DEVICES = [];
 
 const $ = (id) => document.getElementById(id);
 let items = [];
 let shown = [];
 let visible = 0;
-let device = DEVICES[0];
+let device = null;
 let current = -1; // index in `shown` of the wallpaper open in the lightbox
 
 const fileUrl = (it) => `files/${device.key}/${it.id}.${device.ext}`;
@@ -33,7 +24,7 @@ function renderDevices() {
     b.setAttribute("role", "radio");
     b.setAttribute("aria-checked", String(d === device));
     const name = document.createElement("strong");
-    name.textContent = d.name;
+    name.textContent = d.label;
     const size = document.createElement("small");
     size.textContent = `${d.size}, ${d.ext.toUpperCase()}`;
     b.append(name, size);
@@ -107,7 +98,7 @@ function openLightbox(i) {
   const it = shown[i];
   $("lb-img").src = fileUrl(it);
   $("lb-img").alt = it.title;
-  $("lb-title").textContent = `${it.title} (${it.year}) · ${device.name} ${device.size}`;
+  $("lb-title").textContent = `${it.title} (${it.year}) · ${device.label} ${device.size}`;
   $("lb-dl").href = fileUrl(it);
   $("lb-prev").disabled = i === 0;
   $("lb-next").disabled = i === shown.length - 1;
@@ -119,7 +110,9 @@ async function init() {
   $("issue-link").href = `https://github.com/${REPO}/issues/new?template=new-screen-size.yml`;
   renderDevices();
   try {
-    items = await (await fetch("data.json")).json();
+    [items, DEVICES] = await Promise.all([fetch("data.json"), fetch("devices.json")].map(async (p) => (await p).json()));
+    device = DEVICES[0];
+    renderDevices();
   } catch (e) {
     $("count").textContent = "Could not load the wallpaper list.";
     return;

@@ -1,10 +1,10 @@
 # Patent sleep screens for e-readers
 
+**Gallery and downloads: <https://fede-26.github.io/ereader-patent-wallpapers/>**
+
 400 sleep-screen wallpapers made from old public-domain patent drawings. They work with [CrossPoint Reader](https://github.com/crosspoint-reader/crosspoint-reader) on the Seeed reTerminal Sticky, with [KOReader](https://koreader.rocks/), and with any e-reader that can show a custom image as its sleep screen.
 
 ![Preview](anteprima.png)
-
-Browse and download them one by one in the [gallery](https://fede-26.github.io/ereader-patent-wallpapers/).
 
 ## Formats
 
@@ -64,7 +64,7 @@ uv run genera_sfondi.py --help                   # all options
 
 Each target goes to its own folder, `docs/files/<target>/`, next to `docs/files/credits.csv`. `docs/` is also what the GitHub Pages gallery serves (GitHub Pages can publish only the repository root or a folder named `docs`).
 
-After generating, `uv run build_site.py` makes the gallery thumbnails and `docs/data.json`.
+After generating, `uv run build_site.py` makes the gallery thumbnails and `docs/data.json`; the list of devices in `docs/devices.json` is written by `genera_sfondi.py` itself.
 
 Existing wallpapers are kept: the pages already listed in `docs/files/credits.csv` are never selected again and their files are never overwritten. A new run only appends wallpapers until `--count` is reached, and only renders files that are missing, so adding a target or resuming an interrupted run is quick. Downloads stay in `cache/`, so no drawing is fetched twice. To start from scratch, empty `docs/files/` (credits included).
 
@@ -84,7 +84,7 @@ Commons page IDs listed in `esclusi.txt`, next to the script, are skipped.
 
 If your e-reader has a different screen, [open an issue](../../issues/new?template=new-screen-size.yml) with the model, the screen size in pixels (width x height, portrait) and the image format its sleep screen accepts. The same form is linked from the gallery. I render the set for the new size and add it to the gallery.
 
-You can also do it yourself: add an entry to `TARGETS` in `genera_sfondi.py` and run the script, which only renders the missing files.
+You can also add a screen yourself: add an entry to `TARGETS` in `genera_sfondi.py` (name, size, format, a label and a short note for the gallery) and run the script. It renders only the missing files and rewrites `docs/devices.json`, which the gallery reads, so the new size shows up on the site without changing any other file. Run `uv run build_site.py` only when the set of wallpapers changes, to refresh the thumbnails and `docs/data.json`.
 
 ## Credits
 

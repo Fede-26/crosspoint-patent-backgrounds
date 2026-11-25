@@ -1,0 +1,30 @@
+[
+ {
+  "key": "crosspoint",
+  "label": "CrossPoint",
+  "size": "480×800",
+  "ext": "bmp",
+  "note": "reTerminal Sticky and other CrossPoint devices. Copy the BMPs into a folder named .sleep on the microSD card, then set Sleep Screen to Custom."
+ },
+ {
+  "key": "png-480x800",
+  "label": "KOReader",
+  "size": "480×800",
+  "ext": "png",
+  "note": "PNG for KOReader, which does not list BMP files, or any e-reader with a 480×800 screen. Use Sleep screen → Wallpaper → Custom images → Choose random image folder and select the folder with these files."
+ },
+ {
+  "key": "kindle-pw11",
+  "label": "Kindle Paperwhite 11th gen",
+  "size": "1236×1648",
+  "ext": "png",
+  "note": "PNG for KOReader on this Kindle. Use Sleep screen → Wallpaper → Custom images → Choose random image folder and select the folder with these files."
+ },
+ {
+  "key": "kindle-pw12",
+  "label": "Kindle Paperwhite 12th gen",
+  "size": "1264×1680",
+  "ext": "png",
+  "note": "PNG for KOReader on this Kindle. Use Sleep screen → Wallpaper → Custom images → Choose random image folder and select the folder with these files."
+ }
+]

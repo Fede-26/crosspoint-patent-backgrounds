@@ -49,7 +49,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 import numpy as np
@@ -92,13 +92,27 @@ class Target:
     # scan by about 0.4x, so thin lines need thickening; the Kindle renders are close
     # to 1:1 (or enlarged) and keep the original line weight.
     thicken: int
+    # Shown by the gallery site (docs/index.html reads them from docs/devices.json).
+    label: str
+    note: str
 
 
+KOREADER_NOTE = ("Use Sleep screen \u2192 Wallpaper \u2192 Custom images \u2192 Choose random image folder "
+                 "and select the folder with these files.")
+
+# To support another screen, add an entry here and run the script: it renders only the
+# missing files, and the gallery lists the new entry without further changes.
 TARGETS = {
-    "crosspoint": Target("crosspoint", 480, 800, "bmp", 3),
-    "png-480x800": Target("png-480x800", 480, 800, "png", 3),
-    "kindle-pw11": Target("kindle-pw11", 1236, 1648, "png", 0),
-    "kindle-pw12": Target("kindle-pw12", 1264, 1680, "png", 0),
+    "crosspoint": Target("crosspoint", 480, 800, "bmp", 3, "CrossPoint",
+                         "reTerminal Sticky and other CrossPoint devices. Copy the BMPs into a folder named "
+                         ".sleep on the microSD card, then set Sleep Screen to Custom."),
+    "png-480x800": Target("png-480x800", 480, 800, "png", 3, "KOReader",
+                          "PNG for KOReader, which does not list BMP files, or any e-reader with a 480\u00d7800 "
+                          "screen. " + KOREADER_NOTE),
+    "kindle-pw11": Target("kindle-pw11", 1236, 1648, "png", 0, "Kindle Paperwhite 11th gen",
+                          "PNG for KOReader on this Kindle. " + KOREADER_NOTE),
+    "kindle-pw12": Target("kindle-pw12", 1264, 1680, "png", 0, "Kindle Paperwhite 12th gen",
+                          "PNG for KOReader on this Kindle. " + KOREADER_NOTE),
 }
 
 
@@ -521,8 +535,7 @@ def main() -> None:
 
     targets = [TARGETS[name] for name in args.targets]
     if args.thicken is not None:
-        targets = [Target(t.name, t.width, t.height, t.fmt, args.thicken) if t.width == 480 else t
-                   for t in targets]
+        targets = [replace(t, thicken=args.thicken) if t.width == 480 else t for t in targets]
 
     def out_path(target: Target, stem: str) -> Path:
         return args.out / target.name / f"{stem}.{target.fmt}"
@@ -611,6 +624,10 @@ def main() -> None:
         print(f"{stem}  {page['year']}  {page['title'][5:80]}", flush=True)
 
     write_credits()
+    # The gallery reads its list of devices from here, so it follows TARGETS.
+    devices = [{"key": t.name, "label": t.label, "size": f"{t.width}\u00d7{t.height}", "ext": t.fmt, "note": t.note}
+               for t in TARGETS.values()]
+    (args.out.parent / "devices.json").write_text(json.dumps(devices, ensure_ascii=False, indent=1), encoding="utf-8")
     made = [args.out / "crosspoint" / row[0] for row in credits]
     if all(p.exists() for p in made):  # the preview is drawn from the CrossPoint BMPs
         contact_sheet(made, here / "anteprima.png", args.preview_cols, args.preview_divisor)
