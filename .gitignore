@@ -2,4 +2,4 @@ cache/
 backup-sd/
 run.log
 .DS_Store
-dist/
+release/

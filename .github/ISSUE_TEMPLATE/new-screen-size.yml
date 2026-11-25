@@ -1,0 +1,40 @@
+name: Request a new screen size
+description: Ask for the wallpapers to be rendered for another e-reader.
+title: "Screen size: <device model>"
+labels: ["new-size"]
+body:
+  - type: input
+    id: device
+    attributes:
+      label: Device model
+      description: For example "Kobo Clara BW" or "Kindle Scribe".
+    validations:
+      required: true
+  - type: input
+    id: size
+    attributes:
+      label: Screen size in pixels
+      description: Width x height in portrait, for example 1072x1448. Check the manufacturer's specifications if you are not sure.
+    validations:
+      required: true
+  - type: dropdown
+    id: format
+    attributes:
+      label: Image format the sleep screen accepts
+      options:
+        - PNG
+        - BMP
+        - JPEG
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: software
+    attributes:
+      label: Software that shows the sleep screen
+      description: For example KOReader, CrossPoint or the stock firmware.
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else
+      description: Gray levels of the screen, if you know them, or other requirements.

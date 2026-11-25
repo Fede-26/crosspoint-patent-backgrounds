@@ -12,18 +12,19 @@ size gets its own layout and line weight instead of a rescaled copy:
   crosspoint    480x800    2-bit grayscale BMP, palette 0/85/170/255 (the panel's
                            native levels). CrossPoint draws it without further
                            dithering (lib/GfxRenderer/Bitmap.cpp: "1-bit and
-                           2-bit are always native"). Goes to --out (default ./sleep).
+                           2-bit are always native").
   png-480x800   480x800    the same layout as crosspoint, as a 2-bit indexed PNG.
   kindle-pw11   1236x1648  2-bit indexed PNG for the Kindle Paperwhite 11th gen.
   kindle-pw12   1264x1680  2-bit indexed PNG for the Kindle Paperwhite 12th gen.
-                           PNG files go to --dist/<target>/ (default ./dist).
+                           Every target goes to --out/<target>/ (default docs/files),
+                           which is also the folder the GitHub Pages site serves.
 
 The other devices get PNG, not BMP, because KOReader's screensaver folder only lists
 gif, jpeg, jpg, png, svg, tif, tiff and webp files. An indexed PNG with 4 entries is
 also much smaller than a BMP.
 
 Existing wallpapers are kept: the pages already listed in --out/credits.csv are never
-re-selected and their CrossPoint BMP is never overwritten. New ones are appended until
+re-selected and their files are never overwritten. New ones are appended until
 --count wallpapers exist in total. Downloads are kept in --cache, so nothing is fetched
 twice.
 
@@ -33,7 +34,7 @@ Usage:
     uv run genera_sfondi.py --white 200 --gamma 0.8 --no-dither
     uv run genera_sfondi.py --help                # every option
 
-Then copy the .bmp files into /.sleep/ on the microSD card and set
+Then copy the files of docs/files/crosspoint into /.sleep/ on the microSD card and set
 Settings > Display > Sleep Screen = Custom. For KOReader, copy the PNG files of your
 Kindle model into a folder and select it under Screen saver > Wallpaper > Screensaver folder.
 """
@@ -499,8 +500,8 @@ def main() -> None:
                     help="quantize the CrossPoint BMPs without dithering (sharper lines)")
     ap.add_argument("--no-flatten", action="store_true",
                     help="do not normalize the paper background (contrast stretch only)")
-    ap.add_argument("--out", type=Path, default=here / "sleep", help="output folder of the CrossPoint BMPs")
-    ap.add_argument("--dist", type=Path, default=here / "dist", help="output folder of the Kindle PNGs")
+    ap.add_argument("--out", type=Path, default=here / "docs" / "files",
+                    help="output folder: one subfolder per target, plus credits.csv (default docs/files)")
     ap.add_argument("--cache", type=Path, default=here / "cache", help="download folder")
     ap.add_argument("--contact", default="",
                     help="contact (URL or email) for the User-Agent, as Wikimedia asks; "
@@ -524,8 +525,7 @@ def main() -> None:
                    for t in targets]
 
     def out_path(target: Target, stem: str) -> Path:
-        folder = args.out if target.fmt == "bmp" else args.dist / target.name
-        return folder / f"{stem}.{target.fmt}"
+        return args.out / target.name / f"{stem}.{target.fmt}"
 
     for target in targets:
         out_path(target, "x").parent.mkdir(parents=True, exist_ok=True)
@@ -555,7 +555,7 @@ def main() -> None:
     failed_list = args.cache / "falliti.txt"
     failed = set(failed_list.read_text().split()) if failed_list.exists() else set()
     # Manual exclusions: one pageid per line (the "pageid" column of credits.csv).
-    excluded_list = args.out.parent / "esclusi.txt"
+    excluded_list = here / "esclusi.txt"
     if excluded_list.exists():
         failed |= {line.split("#")[0].strip() for line in excluded_list.read_text().splitlines()}
 
@@ -611,10 +611,10 @@ def main() -> None:
         print(f"{stem}  {page['year']}  {page['title'][5:80]}", flush=True)
 
     write_credits()
-    made = [args.out / row[0] for row in credits]
-    contact_sheet(made, args.out.parent / "anteprima.png", args.preview_cols, args.preview_divisor)
-    print(f"\n{len(credits)} wallpapers ({n_new} new); BMPs in {args.out}, PNGs in {args.dist}; "
-          f"preview in {args.out.parent / 'anteprima.png'}")
+    made = [args.out / "crosspoint" / row[0] for row in credits]
+    if all(p.exists() for p in made):  # the preview is drawn from the CrossPoint BMPs
+        contact_sheet(made, here / "anteprima.png", args.preview_cols, args.preview_divisor)
+    print(f"\n{len(credits)} wallpapers ({n_new} new) in {args.out}; preview in {here / 'anteprima.png'}")
     if len(credits) < args.count:
         print(f"WARNING: {args.count} requested, only {len(credits)} valid candidates found")
 

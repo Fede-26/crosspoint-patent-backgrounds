@@ -4,16 +4,18 @@
 
 ![Preview](anteprima.png)
 
+Browse and download them one by one in the [gallery](https://fede-26.github.io/ereader-patent-wallpapers/).
+
 ## Formats
 
 Every wallpaper is rendered from the source scan once per size, so each size has its own layout and line weight. All files use 4 gray levels (2 bits per pixel).
 
 | Device | Size | Format | Where |
 | --- | --- | --- | --- |
-| CrossPoint (reTerminal Sticky) | 480x800 | BMP | `sleep/` in this repository |
-| Any device, KOReader | 480x800 | PNG | `png-480x800.zip` in the [releases](../../releases) |
-| Kindle Paperwhite 11th gen | 1236x1648 | PNG | `kindle-pw11.zip` in the releases |
-| Kindle Paperwhite 12th gen | 1264x1680 | PNG | `kindle-pw12.zip` in the releases |
+| CrossPoint (reTerminal Sticky) | 480x800 | BMP | `docs/files/crosspoint/`, or `crosspoint.zip` in the [releases](../../releases) |
+| Any device, KOReader | 480x800 | PNG | `docs/files/png-480x800/`, or `png-480x800.zip` in the releases |
+| Kindle Paperwhite 11th gen | 1236x1648 | PNG | `docs/files/kindle-pw11/`, or `kindle-pw11.zip` in the releases |
+| Kindle Paperwhite 12th gen | 1264x1680 | PNG | `docs/files/kindle-pw12/`, or `kindle-pw12.zip` in the releases |
 
 The PNG files are indexed PNGs with a 4-entry gray palette, the smallest standard layout for 4 gray levels: about 19 KB each at 480x800 and about 60 KB at Kindle size, against 96 KB for the 480x800 BMP and about 6 MB for a Kindle-size BMP.
 
@@ -21,11 +23,11 @@ The PNG files are indexed PNGs with a 4-entry gray palette, the smallest standar
 
 ## Installing on CrossPoint
 
-The files in `sleep/` are 480x800, 2-bit grayscale BMPs (400 of them). That is the native screen size, so CrossPoint draws them directly, without converting or caching them.
+The files in `docs/files/crosspoint/` are 480x800, 2-bit grayscale BMPs (400 of them). That is the native screen size, so CrossPoint draws them directly, without converting or caching them.
 
 1. Turn off the device and put its microSD card in your computer.
 2. In the root of the card, create a folder named `.sleep`. Finder refuses names that start with a dot, so either create it from a terminal (`mkdir /Volumes/<card>/.sleep`) or name the folder `sleep`, which CrossPoint also accepts.
-3. Copy the `patent_*.bmp` files from `sleep/` into that folder. You do not need `credits.csv` on the card.
+3. Copy the `patent_*.bmp` files from `docs/files/crosspoint/` into that folder. You do not need `credits.csv` on the card.
 4. On macOS, remove the `._*` files that Finder and `cp` create next to each copy. CrossPoint lists them as invalid BMPs:
 
    ```sh
@@ -60,9 +62,11 @@ uv run genera_sfondi.py --count 500              # add 100 more to the existing 
 uv run genera_sfondi.py --help                   # all options
 ```
 
-The BMPs go to `sleep/`, the PNGs to `dist/<target>/` (`dist/` is not tracked by git; the releases are zips of those folders).
+Each target goes to its own folder, `docs/files/<target>/`, next to `docs/files/credits.csv`. `docs/` is also what the GitHub Pages gallery serves (GitHub Pages can publish only the repository root or a folder named `docs`).
 
-Existing wallpapers are kept: the pages already listed in `sleep/credits.csv` are never selected again and their BMP is never overwritten. A new run only appends wallpapers until `--count` is reached, and only renders files that are missing, so adding a target or resuming an interrupted run is quick. Downloads stay in `cache/`, so no drawing is fetched twice. To start from scratch, empty `sleep/` (credits included).
+After generating, `uv run build_site.py` makes the gallery thumbnails and `docs/data.json`, and one zip per target in `release/` (not tracked by git) to attach to a release.
+
+Existing wallpapers are kept: the pages already listed in `docs/files/credits.csv` are never selected again and their files are never overwritten. A new run only appends wallpapers until `--count` is reached, and only renders files that are missing, so adding a target or resuming an interrupted run is quick. Downloads stay in `cache/`, so no drawing is fetched twice. To start from scratch, empty `docs/files/` (credits included).
 
 Main options:
 
@@ -74,16 +78,22 @@ Main options:
 - `--dither`: Floyd-Steinberg dithering on the PNGs. It makes them larger. The CrossPoint BMPs are dithered unless you pass `--no-dither`.
 - `--contact`: your email or URL, added to the User-Agent. The [Wikimedia User-Agent policy](https://foundation.wikimedia.org/wiki/Policy:Wikimedia_Foundation_User-Agent_Policy) asks automated clients to include contact information.
 
-Commons page IDs listed in `esclusi.txt`, next to the `--out` folder, are skipped.
+Commons page IDs listed in `esclusi.txt`, next to the script, are skipped.
+
+## Other screen sizes
+
+If your e-reader has a different screen, [open an issue](../../issues/new?template=new-screen-size.yml) with the model, the screen size in pixels (width x height, portrait) and the image format its sleep screen accepts. The same form is linked from the gallery site. I render the set for the new size and add it to the next release.
+
+You can also do it yourself: add an entry to `TARGETS` in `genera_sfondi.py` and run the script, which only renders the missing files.
 
 ## Credits
 
 The drawings come from [Wikimedia Commons](https://commons.wikimedia.org/). Most are scans published by the U.S. National Archives (NARA) and the Digital Public Library of America (DPLA). Every source file is marked as public domain on Commons, so no attribution is legally required.
 
-`sleep/credits.csv` lists, for each wallpaper, the Commons title, year, license and source page. It applies to every size and format. The processed images only change contrast, size and line weight.
+`docs/files/credits.csv` lists, for each wallpaper, the Commons title, year, license and source page. It applies to every size and format. The processed images only change contrast, size and line weight.
 
 ## License
 
 The script `genera_sfondi.py` is released under the [MIT License](LICENSE).
 
-The images (`sleep/*.bmp`, the PNG files in the releases and `anteprima.png`) keep the status of their sources, which are in the public domain. To the extent that the processing adds any copyright of its own, the author waives it under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/).
+The images (everything in `docs/files/`, the thumbnails in `docs/thumbs/` and `anteprima.png`) keep the status of their sources, which are in the public domain. To the extent that the processing adds any copyright of its own, the author waives it under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/).
