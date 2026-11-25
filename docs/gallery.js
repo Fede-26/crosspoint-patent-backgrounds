@@ -5,12 +5,16 @@ const PAGE = 48; // cards added per click on "Show more"
 // key: also the folder under files/ and the zip name in the release.
 const DEVICES = [
   { key: "crosspoint", name: "CrossPoint", size: "480×800", ext: "bmp", zip: "crosspoint.zip",
-    note: "reTerminal Sticky and other CrossPoint devices. Copy the BMPs into a folder named .sleep on the microSD card." },
+    w: 480, h: 800, badge: "BMP",
+    note: "reTerminal Sticky and other CrossPoint devices. Copy the BMPs into a folder named .sleep on the microSD card, then set Sleep Screen to Custom." },
   { key: "png-480x800", name: "KOReader", size: "480×800", ext: "png", zip: "png-480x800.zip",
+    w: 480, h: 800, badge: "PNG",
     note: "PNG for KOReader (it does not list BMP files) or any e-reader with a 480×800 screen." },
   { key: "kindle-pw11", name: "Kindle Paperwhite 11th gen", size: "1236×1648", ext: "png", zip: "kindle-pw11.zip",
+    w: 1236, h: 1648, badge: "PNG",
     note: "PNG for KOReader on this Kindle. Use Sleep screen → Wallpaper → Custom images → Choose random image folder." },
   { key: "kindle-pw12", name: "Kindle Paperwhite 12th gen", size: "1264×1680", ext: "png", zip: "kindle-pw12.zip",
+    w: 1264, h: 1680, badge: "PNG",
     note: "PNG for KOReader on this Kindle. Use Sleep screen → Wallpaper → Custom images → Choose random image folder." },
 ];
 
@@ -29,12 +33,25 @@ function renderDevices() {
   for (const d of DEVICES) {
     const b = document.createElement("button");
     b.type = "button";
+    b.className = "dev";
     b.setAttribute("role", "radio");
     b.setAttribute("aria-checked", String(d === device));
-    b.append(d.name);
-    const s = document.createElement("small");
-    s.textContent = `${d.size} · ${d.ext.toUpperCase()}`;
-    b.append(s);
+    const ico = document.createElement("span");
+    ico.className = "ico";
+    ico.style.aspectRatio = `${d.w} / ${d.h}`;
+    const text = document.createElement("span");
+    const name = document.createElement("strong");
+    name.textContent = d.name;
+    const size = document.createElement("small");
+    size.textContent = d.size;
+    const badge = document.createElement("span");
+    badge.className = "badge";
+    badge.textContent = d.badge;
+    const col = document.createElement("span");
+    col.style.display = "block";
+    col.append(size, document.createElement("br"), badge);
+    text.append(name, col);
+    b.append(ico, text);
     b.addEventListener("click", () => { device = d; renderDevices(); renderDevice(); });
     box.append(b);
   }
@@ -43,7 +60,7 @@ function renderDevices() {
 function renderDevice() {
   $("device-note").textContent = device.note;
   $("zip-link").href = `https://github.com/${REPO}/releases/latest/download/${device.zip}`;
-  $("zip-link").textContent = `Download all ${items.length} for ${device.name} (${device.size}, zip)`;
+  $("zip-link").textContent = `Download all ${items.length} for ${device.name}, zip`;
   // Card download links depend on the device.
   for (const a of document.querySelectorAll("[data-dl]")) a.href = fileUrl(items[a.dataset.dl]);
   if ($("lightbox").open) openLightbox(current);
@@ -73,7 +90,7 @@ function card(it) {
   const links = document.createElement("div");
   links.className = "links";
   const dl = document.createElement("a");
-  dl.textContent = "Download"; dl.setAttribute("download", ""); dl.dataset.dl = String(idx); dl.href = fileUrl(it);
+  dl.className = "dl"; dl.textContent = "Download"; dl.setAttribute("download", ""); dl.dataset.dl = String(idx); dl.href = fileUrl(it);
   const src = document.createElement("a");
   src.textContent = "Source"; src.href = it.source; src.rel = "noopener";
   links.append(dl, src);
@@ -115,6 +132,7 @@ function openLightbox(i) {
 
 async function init() {
   $("repo-link").href = `https://github.com/${REPO}`;
+  $("repo-link2").href = `https://github.com/${REPO}`;
   $("issue-link").href = `https://github.com/${REPO}/issues/new?template=new-screen-size.yml`;
   renderDevices();
   try {
