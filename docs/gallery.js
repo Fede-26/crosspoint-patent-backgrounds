@@ -2,19 +2,15 @@
 const REPO = "Fede-26/ereader-patent-wallpapers";
 const PAGE = 48; // cards added per click on "Show more"
 
-// key: also the folder under files/ and the zip name in the release.
+// key: the folder under files/.
 const DEVICES = [
-  { key: "crosspoint", name: "CrossPoint", size: "480×800", ext: "bmp", zip: "crosspoint.zip",
-    w: 480, h: 800, badge: "BMP",
+  { key: "crosspoint", name: "CrossPoint", size: "480×800", ext: "bmp",
     note: "reTerminal Sticky and other CrossPoint devices. Copy the BMPs into a folder named .sleep on the microSD card, then set Sleep Screen to Custom." },
-  { key: "png-480x800", name: "KOReader", size: "480×800", ext: "png", zip: "png-480x800.zip",
-    w: 480, h: 800, badge: "PNG",
+  { key: "png-480x800", name: "KOReader", size: "480×800", ext: "png",
     note: "PNG for KOReader (it does not list BMP files) or any e-reader with a 480×800 screen." },
-  { key: "kindle-pw11", name: "Kindle Paperwhite 11th gen", size: "1236×1648", ext: "png", zip: "kindle-pw11.zip",
-    w: 1236, h: 1648, badge: "PNG",
+  { key: "kindle-pw11", name: "Kindle Paperwhite 11th gen", size: "1236×1648", ext: "png",
     note: "PNG for KOReader on this Kindle. Use Sleep screen → Wallpaper → Custom images → Choose random image folder." },
-  { key: "kindle-pw12", name: "Kindle Paperwhite 12th gen", size: "1264×1680", ext: "png", zip: "kindle-pw12.zip",
-    w: 1264, h: 1680, badge: "PNG",
+  { key: "kindle-pw12", name: "Kindle Paperwhite 12th gen", size: "1264×1680", ext: "png",
     note: "PNG for KOReader on this Kindle. Use Sleep screen → Wallpaper → Custom images → Choose random image folder." },
 ];
 
@@ -36,22 +32,11 @@ function renderDevices() {
     b.className = "dev";
     b.setAttribute("role", "radio");
     b.setAttribute("aria-checked", String(d === device));
-    const ico = document.createElement("span");
-    ico.className = "ico";
-    ico.style.aspectRatio = `${d.w} / ${d.h}`;
-    const text = document.createElement("span");
     const name = document.createElement("strong");
     name.textContent = d.name;
     const size = document.createElement("small");
-    size.textContent = d.size;
-    const badge = document.createElement("span");
-    badge.className = "badge";
-    badge.textContent = d.badge;
-    const col = document.createElement("span");
-    col.style.display = "block";
-    col.append(size, document.createElement("br"), badge);
-    text.append(name, col);
-    b.append(ico, text);
+    size.textContent = `${d.size}, ${d.ext.toUpperCase()}`;
+    b.append(name, size);
     b.addEventListener("click", () => { device = d; renderDevices(); renderDevice(); });
     box.append(b);
   }
@@ -59,8 +44,7 @@ function renderDevices() {
 
 function renderDevice() {
   $("device-note").textContent = device.note;
-  $("zip-link").href = `https://github.com/${REPO}/releases/latest/download/${device.zip}`;
-  $("zip-link").textContent = `Download all ${items.length} for ${device.name}, zip`;
+  $("zip-btn").textContent = `Download all ${items.length} as zip`;
   // Card download links depend on the device.
   for (const a of document.querySelectorAll("[data-dl]")) a.href = fileUrl(items[a.dataset.dl]);
   if ($("lightbox").open) openLightbox(current);
@@ -90,7 +74,7 @@ function card(it) {
   const links = document.createElement("div");
   links.className = "links";
   const dl = document.createElement("a");
-  dl.className = "dl"; dl.textContent = "Download"; dl.setAttribute("download", ""); dl.dataset.dl = String(idx); dl.href = fileUrl(it);
+  dl.textContent = "Download"; dl.setAttribute("download", ""); dl.dataset.dl = String(idx); dl.href = fileUrl(it);
   const src = document.createElement("a");
   src.textContent = "Source"; src.href = it.source; src.rel = "noopener";
   links.append(dl, src);
@@ -132,7 +116,6 @@ function openLightbox(i) {
 
 async function init() {
   $("repo-link").href = `https://github.com/${REPO}`;
-  $("repo-link2").href = `https://github.com/${REPO}`;
   $("issue-link").href = `https://github.com/${REPO}/issues/new?template=new-screen-size.yml`;
   renderDevices();
   try {
@@ -147,6 +130,54 @@ async function init() {
   renderDevice();
 }
 
+// The zip is built in the browser: JSZip is loaded only when the button is clicked.
+const JSZIP_URL = "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";
+
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const el = document.createElement("script");
+    el.src = src; el.onload = resolve; el.onerror = () => reject(new Error("Could not load JSZip"));
+    document.head.append(el);
+  });
+}
+
+async function downloadZip() {
+  const btn = $("zip-btn"), status = $("zip-status");
+  const d = device;
+  btn.disabled = true;
+  try {
+    status.textContent = "Preparing…";
+    if (!window.JSZip) await loadScript(JSZIP_URL);
+    const zip = new window.JSZip();
+    let done = 0, next = 0;
+    const worker = async () => {
+      while (next < items.length) {
+        const it = items[next++];
+        const res = await fetch(`files/${d.key}/${it.id}.${d.ext}`);
+        if (!res.ok) throw new Error(`${it.id}: HTTP ${res.status}`);
+        zip.file(`${it.id}.${d.ext}`, await res.arrayBuffer());
+        status.textContent = `Fetching ${++done} of ${items.length}…`;
+      }
+    };
+    await Promise.all(Array.from({ length: 6 }, worker));
+    zip.file("credits.csv", await (await fetch("files/credits.csv")).text());
+    status.textContent = "Compressing…";
+    // The files are already compressed (PNG) or compress well (BMP): deflate for both.
+    const blob = await zip.generateAsync({ type: "blob", compression: "DEFLATE", compressionOptions: { level: 6 } });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `patent-sleep-screens-${d.key}.zip`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+    status.textContent = "";
+  } catch (e) {
+    status.textContent = `Failed: ${e.message}`;
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+$("zip-btn").addEventListener("click", downloadZip);
 $("q").addEventListener("input", applyFilters);
 $("decade").addEventListener("change", applyFilters);
 $("more").addEventListener("click", more);

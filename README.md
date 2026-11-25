@@ -12,10 +12,10 @@ Every wallpaper is rendered from the source scan once per size, so each size has
 
 | Device | Size | Format | Where |
 | --- | --- | --- | --- |
-| CrossPoint (reTerminal Sticky) | 480x800 | BMP | `docs/files/crosspoint/`, or `crosspoint.zip` in the [releases](../../releases) |
-| Any device, KOReader | 480x800 | PNG | `docs/files/png-480x800/`, or `png-480x800.zip` in the releases |
-| Kindle Paperwhite 11th gen | 1236x1648 | PNG | `docs/files/kindle-pw11/`, or `kindle-pw11.zip` in the releases |
-| Kindle Paperwhite 12th gen | 1264x1680 | PNG | `docs/files/kindle-pw12/`, or `kindle-pw12.zip` in the releases |
+| CrossPoint (reTerminal Sticky) | 480x800 | BMP | `docs/files/crosspoint/` |
+| Any device, KOReader | 480x800 | PNG | `docs/files/png-480x800/` |
+| Kindle Paperwhite 11th gen | 1236x1648 | PNG | `docs/files/kindle-pw11/` |
+| Kindle Paperwhite 12th gen | 1264x1680 | PNG | `docs/files/kindle-pw12/` |
 
 The PNG files are indexed PNGs with a 4-entry gray palette, the smallest standard layout for 4 gray levels: about 19 KB each at 480x800 and about 60 KB at Kindle size, against 96 KB for the 480x800 BMP and about 6 MB for a Kindle-size BMP.
 
@@ -45,7 +45,7 @@ To see `.sleep` in the CrossPoint file browser, enable hidden files under **Sett
 
 ## Installing on KOReader
 
-1. Download the zip for your screen size from the [releases](../../releases) and unzip it.
+1. Download the files for your screen size from the [gallery](https://fede-26.github.io/ereader-patent-wallpapers/), either one by one or all as a zip, and unzip them.
 2. Copy the PNG files into a folder on the device, for example `koreader/screensaver/`.
 3. In KOReader open **Sleep screen → Wallpaper → Custom images → Choose random image folder** and select that folder (menu names from KOReader `master`; older versions may use different wording, for example "Screensaver").
 
@@ -64,7 +64,7 @@ uv run genera_sfondi.py --help                   # all options
 
 Each target goes to its own folder, `docs/files/<target>/`, next to `docs/files/credits.csv`. `docs/` is also what the GitHub Pages gallery serves (GitHub Pages can publish only the repository root or a folder named `docs`).
 
-After generating, `uv run build_site.py` makes the gallery thumbnails and `docs/data.json`, and one zip per target in `release/` (not tracked by git) to attach to a release.
+After generating, `uv run build_site.py` makes the gallery thumbnails and `docs/data.json`.
 
 Existing wallpapers are kept: the pages already listed in `docs/files/credits.csv` are never selected again and their files are never overwritten. A new run only appends wallpapers until `--count` is reached, and only renders files that are missing, so adding a target or resuming an interrupted run is quick. Downloads stay in `cache/`, so no drawing is fetched twice. To start from scratch, empty `docs/files/` (credits included).
 
@@ -82,7 +82,7 @@ Commons page IDs listed in `esclusi.txt`, next to the script, are skipped.
 
 ## Other screen sizes
 
-If your e-reader has a different screen, [open an issue](../../issues/new?template=new-screen-size.yml) with the model, the screen size in pixels (width x height, portrait) and the image format its sleep screen accepts. The same form is linked from the gallery site. I render the set for the new size and add it to the next release.
+If your e-reader has a different screen, [open an issue](../../issues/new?template=new-screen-size.yml) with the model, the screen size in pixels (width x height, portrait) and the image format its sleep screen accepts. The same form is linked from the gallery. I render the set for the new size and add it to the gallery.
 
 You can also do it yourself: add an entry to `TARGETS` in `genera_sfondi.py` and run the script, which only renders the missing files.
 

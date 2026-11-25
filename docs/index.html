@@ -4,92 +4,51 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Patent sleep screens for e-readers</title>
-<meta name="description" content="400 public-domain patent drawings as sleep screens for CrossPoint, KOReader and Kindle. Browse and download.">
+<meta name="description" content="Sleep screens made from public-domain patent drawings, for CrossPoint, KOReader and Kindle.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Inter:wght@400;500;600&family=Lora:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:wght@500;600&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="nav">
-  <div class="wrap nav-in">
-    <a class="brand" href="#top">
-      <svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#315243"/><path d="M9 7h14v18H9z" fill="#faf8f3"/><path d="M12 11h8M12 15h8M12 19h5" stroke="#315243" stroke-width="1.6" stroke-linecap="round"/></svg>
-      <span>Patent <em>sleep screens</em></span>
-    </a>
-    <nav aria-label="Sections">
-      <a href="#download">Download</a>
-      <a href="#gallery">Gallery</a>
-      <a href="#request">Request a size</a>
-      <a class="btn gold" id="repo-link" href="#">GitHub</a>
-    </nav>
-  </div>
+<header class="wrap top">
+  <h1>Patent sleep screens</h1>
+  <nav aria-label="Links">
+    <a id="repo-link" href="#">GitHub</a>
+  </nav>
 </header>
 
-<main id="top">
-  <section class="hero wrap">
-    <div class="hero-text">
-      <h1>Let your e-reader <span class="mark">sleep in style.</span></h1>
-      <p class="lead">400 old patent drawings, cleaned up for e-ink: black lines on white paper, ready for <a href="https://crosspointreader.com/">CrossPoint</a>, <a href="https://koreader.rocks/">KOReader</a> and any e-reader that can show a custom image as its sleep screen.</p>
-      <p class="cta">
-        <a class="btn primary" href="#download">Download the set</a>
-        <a class="btn ghost" href="#gallery">Browse the gallery</a>
-      </p>
-      <p class="hand">Free to use. Public domain. No sign-up.</p>
-    </div>
-    <div class="hero-art" aria-hidden="true">
-      <div class="frame f1"><img src="thumbs/patent_09.webp" alt=""></div>
-      <div class="frame f2"><img src="thumbs/patent_17.webp" alt=""></div>
-    </div>
+<main class="wrap">
+  <p class="intro">Sleep screens made from old patent drawings in the public domain, taken from <a href="https://commons.wikimedia.org/">Wikimedia Commons</a>. The images are line drawings reduced to 4 gray levels (2 bits per pixel), so they suit e-ink screens. They work with <a href="https://crosspointreader.com/">CrossPoint</a>, <a href="https://koreader.rocks/">KOReader</a>, and any e-reader that can show a custom image as its sleep screen.</p>
+
+  <section id="download" aria-labelledby="dev-h">
+    <h2 id="dev-h">Screen size</h2>
+    <div class="devices" id="devices" role="radiogroup" aria-label="Screen size"></div>
+    <p class="note" id="device-note"></p>
+    <p><button class="btn" id="zip-btn" type="button">Download all as zip</button> <span class="status" id="zip-status" role="status"></span></p>
   </section>
 
-  <div class="stats wrap" aria-label="At a glance">
-    <div><strong>400</strong><span>wallpapers</span></div>
-    <div><strong>4</strong><span>screen sizes</span></div>
-    <div><strong>1800s</strong><span>to 1930s drawings</span></div>
-    <div><strong>CC0</strong><span>public domain</span></div>
-  </div>
-
-  <section class="wrap block" id="download" aria-labelledby="dev-h">
-    <p class="kicker">Step 1</p>
-    <h2 id="dev-h">Pick your screen</h2>
-    <div class="devices" id="devices" role="radiogroup" aria-label="Device"></div>
-    <div class="dev-detail">
-      <p class="note" id="device-note"></p>
-      <a class="btn primary" id="zip-link" href="#">Download the zip</a>
-    </div>
-  </section>
-
-  <section class="wrap block" id="gallery" aria-labelledby="gal-h">
-    <p class="kicker">Step 2, optional</p>
-    <h2 id="gal-h">Or choose one by one</h2>
+  <section id="gallery" aria-labelledby="gal-h">
+    <h2 id="gal-h">Wallpapers</h2>
     <div class="filters">
-      <label class="field">Search <input type="search" id="q" placeholder="sewing machine, clock, plough&hellip;"></label>
+      <label class="field">Search <input type="search" id="q"></label>
       <label class="field">Decade
         <select id="decade"><option value="">All</option></select>
       </label>
       <span class="count" id="count" aria-live="polite"></span>
     </div>
     <div class="grid" id="grid"></div>
-    <p class="more"><button class="btn ghost" id="more" type="button" hidden>Show more</button></p>
+    <p class="more"><button class="btn" id="more" type="button" hidden>Show more</button></p>
   </section>
 
-  <section class="request" id="request" aria-labelledby="req-h">
-    <div class="wrap req-in">
-      <div>
-        <h2 id="req-h">Another screen size?</h2>
-        <p>Open an issue with the model of your e-reader, its screen size in pixels (width &times; height, portrait) and the format it reads. I will render the whole set for it and add it to the next release.</p>
-      </div>
-      <a class="btn gold" id="issue-link" href="#">Request a size</a>
-    </div>
+  <section id="request" aria-labelledby="req-h">
+    <h2 id="req-h">Other screen sizes</h2>
+    <p>For a different screen, <a id="issue-link" href="#">open an issue</a> with the model, the screen size in pixels (width &times; height, portrait) and the image format its sleep screen accepts.</p>
   </section>
 </main>
 
-<footer>
-  <div class="wrap">
-    <p>The drawings come from <a href="https://commons.wikimedia.org/">Wikimedia Commons</a> and are in the public domain; each card links to its source page. The generator script is MIT licensed, the processed images are released under <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>. Source and instructions: <a id="repo-link2" href="#">GitHub repository</a>.</p>
-    <p class="fine">This is a community project, not affiliated with CrossPoint, KOReader or Amazon.</p>
-  </div>
+<footer class="wrap">
+  <p>The drawings are in the public domain; each card links to its source page on Wikimedia Commons. The generator script is MIT licensed and the processed images are released under <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>. Not affiliated with CrossPoint, KOReader or Amazon.</p>
 </footer>
 
 <dialog id="lightbox" aria-label="Preview">
@@ -97,9 +56,9 @@
   <div class="lb-body"><img id="lb-img" alt=""></div>
   <p class="lb-title" id="lb-title"></p>
   <div class="lb-actions">
-    <button class="btn ghost" id="lb-prev" type="button">&larr; Previous</button>
-    <a class="btn primary" id="lb-dl" href="#" download>Download</a>
-    <button class="btn ghost" id="lb-next" type="button">Next &rarr;</button>
+    <button class="btn" id="lb-prev" type="button">&larr; Previous</button>
+    <a class="btn" id="lb-dl" href="#" download>Download</a>
+    <button class="btn" id="lb-next" type="button">Next &rarr;</button>
   </div>
 </dialog>
 <script src="gallery.js"></script>
