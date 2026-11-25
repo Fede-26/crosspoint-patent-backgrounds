@@ -13,13 +13,12 @@ size gets its own layout and line weight instead of a rescaled copy:
                            native levels). CrossPoint draws it without further
                            dithering (lib/GfxRenderer/Bitmap.cpp: "1-bit and
                            2-bit are always native").
-  png-480x800   480x800    the same layout as crosspoint, as a 2-bit indexed PNG.
-  kindle-pw11   1236x1648  2-bit indexed PNG for the Kindle Paperwhite 11th gen.
+  kindle-pw11   1236x1648  2-bit indexed PNG for the Kindle Paperwhite 11th gen (KOReader).
   kindle-pw12   1264x1680  2-bit indexed PNG for the Kindle Paperwhite 12th gen.
                            Every target goes to --out/<target>/ (default docs/files),
                            which is also the folder the GitHub Pages site serves.
 
-The other devices get PNG, not BMP, because KOReader's screensaver folder only lists
+The Kindle files are PNG, not BMP, because KOReader's screensaver folder only lists
 gif, jpeg, jpg, png, svg, tif, tiff and webp files. An indexed PNG with 4 entries is
 also much smaller than a BMP.
 
@@ -93,26 +92,24 @@ class Target:
     # to 1:1 (or enlarged) and keep the original line weight.
     thicken: int
     # Shown by the gallery site (docs/index.html reads them from docs/devices.json).
-    label: str
+    label: str     # device name
+    software: str  # the software that shows the sleep screen
     note: str
 
 
-KOREADER_NOTE = ("Use Sleep screen \u2192 Wallpaper \u2192 Custom images \u2192 Choose random image folder "
+KOREADER_NOTE = ("PNG files for KOReader. Use Sleep screen \u2192 Wallpaper \u2192 Custom images \u2192 Choose random image folder "
                  "and select the folder with these files.")
 
 # To support another screen, add an entry here and run the script: it renders only the
 # missing files, and the gallery lists the new entry without further changes.
 TARGETS = {
-    "crosspoint": Target("crosspoint", 480, 800, "bmp", 3, "CrossPoint",
-                         "reTerminal Sticky and other CrossPoint devices. Copy the BMPs into a folder named "
-                         ".sleep on the microSD card, then set Sleep Screen to Custom."),
-    "png-480x800": Target("png-480x800", 480, 800, "png", 3, "KOReader",
-                          "PNG for KOReader, which does not list BMP files, or any e-reader with a 480\u00d7800 "
-                          "screen. " + KOREADER_NOTE),
-    "kindle-pw11": Target("kindle-pw11", 1236, 1648, "png", 0, "Kindle Paperwhite 11th gen",
-                          "PNG for KOReader on this Kindle. " + KOREADER_NOTE),
-    "kindle-pw12": Target("kindle-pw12", 1264, 1680, "png", 0, "Kindle Paperwhite 12th gen",
-                          "PNG for KOReader on this Kindle. " + KOREADER_NOTE),
+    "crosspoint": Target("crosspoint", 480, 800, "bmp", 3, "Xteink X4 / Seeed Sticky", "CrossPoint",
+                         "Copy the BMPs into a folder named .sleep on the microSD card, then set Sleep Screen "
+                         "to Custom."),
+    "kindle-pw11": Target("kindle-pw11", 1236, 1648, "png", 0, "Kindle Paperwhite 11th gen", "KOReader",
+                          KOREADER_NOTE),
+    "kindle-pw12": Target("kindle-pw12", 1264, 1680, "png", 0, "Kindle Paperwhite 12th gen", "KOReader",
+                          KOREADER_NOTE),
 }
 
 
@@ -625,7 +622,7 @@ def main() -> None:
 
     write_credits()
     # The gallery reads its list of devices from here, so it follows TARGETS.
-    devices = [{"key": t.name, "label": t.label, "size": f"{t.width}\u00d7{t.height}", "ext": t.fmt, "note": t.note}
+    devices = [{"key": t.name, "label": t.label, "software": t.software, "size": f"{t.width}\u00d7{t.height}", "ext": t.fmt, "note": t.note}
                for t in TARGETS.values()]
     (args.out.parent / "devices.json").write_text(json.dumps(devices, ensure_ascii=False, indent=1), encoding="utf-8")
     made = [args.out / "crosspoint" / row[0] for row in credits]

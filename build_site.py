@@ -1,7 +1,7 @@
 #!/usr/bin/env -S uv run --script
 # /// script
 # requires-python = ">=3.10"
-# dependencies = ["pillow>=10"]
+# dependencies = ["pillow>=10", "numpy>=1.26"]
 # ///
 """Prepare the GitHub Pages gallery.
 
@@ -18,6 +18,7 @@ Usage:
 """
 
 import csv
+import importlib.util
 import json
 import re
 from pathlib import Path
@@ -27,6 +28,10 @@ from PIL import Image
 HERE = Path(__file__).resolve().parent
 DOCS = HERE / "docs"
 FILES = DOCS / "files"
+# The thumbnails are drawn from the CrossPoint BMPs, read with the generator's own decoder.
+_spec = importlib.util.spec_from_file_location("genera_sfondi", HERE / "genera_sfondi.py")
+generator = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(generator)
 THUMB_SIZE = (300, 500)  # about 2x the size of a gallery card, for high-DPI screens
 
 
@@ -51,7 +56,7 @@ def main() -> None:
         data.append({"id": stem, "title": clean_title(title), "year": int(year), "source": source})
         thumb = DOCS / "thumbs" / f"{stem}.webp"
         if not thumb.exists():
-            img = Image.open(FILES / "png-480x800" / f"{stem}.png").convert("L")
+            img = Image.fromarray(generator.read_bmp(FILES / "crosspoint" / f"{stem}.bmp"))
             img.thumbnail(THUMB_SIZE, Image.LANCZOS)
             img.save(thumb, quality=70, method=6)
     (DOCS / "data.json").write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")

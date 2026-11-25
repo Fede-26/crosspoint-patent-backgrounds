@@ -25,9 +25,11 @@ function renderDevices() {
     b.setAttribute("aria-checked", String(d === device));
     const name = document.createElement("strong");
     name.textContent = d.label;
+    const software = document.createElement("small");
+    software.textContent = d.software;
     const size = document.createElement("small");
     size.textContent = `${d.size}, ${d.ext.toUpperCase()}`;
-    b.append(name, size);
+    b.append(name, software, size);
     b.addEventListener("click", () => { device = d; renderDevices(); renderDevice(); });
     box.append(b);
   }

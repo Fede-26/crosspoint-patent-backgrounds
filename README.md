@@ -2,7 +2,7 @@
 
 **Gallery and downloads: <https://fede-26.github.io/ereader-patent-wallpapers/>**
 
-400 sleep-screen wallpapers made from old public-domain patent drawings. They work with [CrossPoint Reader](https://github.com/crosspoint-reader/crosspoint-reader) on the Seeed reTerminal Sticky, with [KOReader](https://koreader.rocks/), and with any e-reader that can show a custom image as its sleep screen.
+400 sleep-screen wallpapers made from old public-domain patent drawings. They work with [CrossPoint Reader](https://github.com/crosspoint-reader/crosspoint-reader) on the Xteink X4 and the Seeed reTerminal Sticky, with [KOReader](https://koreader.rocks/) on Kindle, and with any e-reader that can show a custom image as its sleep screen.
 
 ![Preview](anteprima.png)
 
@@ -12,12 +12,11 @@ Every wallpaper is rendered from the source scan once per size, so each size has
 
 | Device | Size | Format | Where |
 | --- | --- | --- | --- |
-| CrossPoint (reTerminal Sticky) | 480x800 | BMP | `docs/files/crosspoint/` |
-| Any device, KOReader | 480x800 | PNG | `docs/files/png-480x800/` |
-| Kindle Paperwhite 11th gen | 1236x1648 | PNG | `docs/files/kindle-pw11/` |
-| Kindle Paperwhite 12th gen | 1264x1680 | PNG | `docs/files/kindle-pw12/` |
+| Xteink X4 / Seeed Sticky (CrossPoint) | 480x800 | BMP | `docs/files/crosspoint/` |
+| Kindle Paperwhite 11th gen (KOReader) | 1236x1648 | PNG | `docs/files/kindle-pw11/` |
+| Kindle Paperwhite 12th gen (KOReader) | 1264x1680 | PNG | `docs/files/kindle-pw12/` |
 
-The PNG files are indexed PNGs with a 4-entry gray palette, the smallest standard layout for 4 gray levels: about 19 KB each at 480x800 and about 60 KB at Kindle size, against 96 KB for the 480x800 BMP and about 6 MB for a Kindle-size BMP.
+The PNG files are indexed PNGs with a 4-entry gray palette, the smallest standard layout for 4 gray levels: about 60 KB each at Kindle size, against about 6 MB for a Kindle-size BMP. The 480x800 BMPs are 96 KB each.
 
 **KOReader does not list BMP files.** Checking its source (`master` branch, November 2026), the screensaver folder only accepts files with the extensions gif, jpeg, jpg, png, svg, tif, tiff and webp ([`image_ext` in `documentregistry.lua`](https://github.com/koreader/koreader/blob/master/frontend/document/documentregistry.lua), used by [`screensaver.lua`](https://github.com/koreader/koreader/blob/master/frontend/ui/screensaver.lua)). For KOReader use the PNG files.
 
@@ -70,7 +69,7 @@ Existing wallpapers are kept: the pages already listed in `docs/files/credits.cs
 
 Main options:
 
-- `--targets`: which of `crosspoint`, `png-480x800`, `kindle-pw11`, `kindle-pw12` to render.
+- `--targets`: which of `crosspoint`, `kindle-pw11`, `kindle-pw12` to render.
 - `--count`: total number of wallpapers, existing ones included.
 - `--white`, `--black-pct`, `--gamma`: contrast.
 - `--zoom`, `--margin`, `--trim`: how much of the screen the drawing fills.

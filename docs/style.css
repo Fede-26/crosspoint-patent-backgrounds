@@ -42,7 +42,7 @@ section { margin-top: 36px; }
 .dev:hover { border-color: var(--green); }
 .dev[aria-checked="true"] { border-color: var(--green); box-shadow: inset 0 0 0 1px var(--green); }
 .dev strong { display: block; font-weight: 600; font-size: .95rem; }
-.dev small { color: var(--muted); font-size: .85rem; }
+.dev small { display: block; color: var(--muted); font-size: .85rem; }
 .note { color: var(--muted); max-width: 46em; margin: 12px 0; }
 
 .filters { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: end; margin-bottom: 16px; }
